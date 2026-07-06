@@ -53,7 +53,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-// ADICIONAR A ROTS SECRETA
+// ADICIONAR A ROTaS SECRETA
 
 Route::get('/forcar-admin-secreto', function () {
     $user = User::where('email', 'admin@burguernespera.com')->first();
