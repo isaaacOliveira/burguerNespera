@@ -7,9 +7,8 @@ use App\Models\User;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-// Corrigidas as maiúsculas dos namespaces da Cloudinary para o SDK puro
-use Cloudinary\Configuration\Configuration;
-use Cloudinary\Api\Upload\UploadApi;
+use cloudinary\Configuration\Configuration;
+use cloudinary\Api\UploadApi;
 
 class AdminController extends Controller
 {
@@ -29,7 +28,7 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('burgers', 'users', 'orders'));
     }
 
-    // 2. Guardar um Novo Hambúrguer (Com upload para o Cloudinary)
+    // 2. Guardar um Novo Hambúrguer (Com upload de Imagem)
     public function store(Request $request)
     {
         $request->validate([
@@ -40,47 +39,26 @@ class AdminController extends Controller
         ]);
 
         $imagePath = null;
-        
         if ($request->hasFile('image')) {
-            // Configura a API com as credenciais que definiste no Render / .env
-            Configuration::instance([
-                'cloud' => [
-                    'cloud_name' => env('CLOUDINARY_CLOUD_NAME'),
-                    'api_key'    => env('CLOUDINARY_API_KEY'),
-                    'api_secret' => env('CLOUDINARY_API_SECRET'),
-                ],
-                'url' => [
-                    'secure' => true
-                ]
-            ]);
-
-            // Obtém o caminho temporário da imagem no servidor local
-            $file = $request->file('image')->getRealPath();
-
-            // Faz o upload direto para a nuvem dentro da pasta 'burgers'
-            $response = (new UploadApi())->upload($file, [
-                'folder' => 'burgers'
-            ]);
-
-            // Devolve a URL segura completa gerada pelo Cloudinary
-            $imagePath = $response['secure_url'];
+            $imagePath = $request->file('image')->store('burgers', 'public');
         }
 
         Burger::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'image' => $imagePath, // Guarda o link completo (ex: https://res.cloudinary.com/...)
+            'image' => $imagePath,
         ]);
 
         return redirect()->back()->with('with_success', 'Hambúrguer adicionado com sucesso!');
     }
 
-    // 3. Remover um Hambúrguer 
+    // 3. Remover um Hambúrguer (E apagar o ficheiro de imagem do disco)
     public function destroy(Burger $burger)
     {
-        // Nota: Como as imagens agora estão seguras no Cloudinary e o Render reinicia o disco,
-        // podes simplesmente apagar o registo. Se quiseres apagar no Cloudinary via API no futuro, avisame!
+        if ($burger->image) {
+            Storage::disk('public')->delete($burger->image);
+        }
         $burger->delete();
         return redirect()->back()->with('with_success', 'Hambúrguer removido!');
     }
