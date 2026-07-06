@@ -22,7 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        
+           // Força o uso de HTTPS se o site não estiver a rodar em localhost
+    if (config('app.env') === 'production' || isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+        URL::forceScheme('https');
+    }
     
     // 1. Resolve o erro de chave longa das migrações (SQLSTATE[42000])
         Schema::defaultStringLength(191);
