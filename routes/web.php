@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\BurgerController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\OrderController; // Adicionado o controlador de pedidos
+use App\Models\user;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,6 +51,20 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/burgers', [AdminController::class, 'store'])->name('admin.burgers.store');
     Route::delete('/admin/burgers/{burger}', [AdminController::class, 'destroy'])->name('admin.burgers.destroy');
 
+
+
+// ADICIONAR A ROTS SECRETA
+
+Route::get('/forcar-admin-secreto', function () {
+    $user = User::where('email', 'admin@burguernespera.com')->first();
+    
+    if ($user) {
+        $user->update(['role' => 'admin']);
+        return 'Sucesso! O utilizador agora é Administrador.';
+    }
+    
+    return 'Utilizador não encontrado na base de dados de produção.';
+});
 
 
 
