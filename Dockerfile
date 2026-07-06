@@ -30,4 +30,7 @@ RUN composer install --no-dev --optimize-autoloader
 # Dar permissões corretas para as pastas do Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
+# Garante que as tabelas são criadas antes de iniciar o Apache
+CMD php artisan migrate --force && apache2-foreground
+
 EXPOSE 80
