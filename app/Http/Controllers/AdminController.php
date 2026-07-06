@@ -48,6 +48,7 @@ class AdminController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'image' => $imagePath,
+            
         ]);
 
         return redirect()->back()->with('with_success', 'Hambúrguer adicionado com sucesso!');

@@ -10,7 +10,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Procura o utilizador na nuvem e força a alteração para admin
+    \Illuminate\Support\Facades\Artisan::call('storage:link');
+       
+    // Procura o utilizador na nuvem e força a alteração para admin
         $user = User::where('email', 'admin@burguernespera.com')->first();
         
         if ($user) {
