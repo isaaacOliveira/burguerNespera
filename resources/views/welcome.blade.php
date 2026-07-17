@@ -96,7 +96,7 @@
             @foreach($burgers as $burger)
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm border-0 overflow-hidden rounded-3 card-burger">
-                        <img src="{{ asset('storage/' . $burger->image) }}" class="card-img-top" alt="{{ $burger->name }}" style="height: 220px; object-fit: cover;">
+                        <img src="{{ $burger->image }}" alt="{{ $burger->name }}" style="width: 80px; height: 80px; object-fit: cover;">
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title fw-bold text-dark fs-4 mb-2">{{ $burger->name }}</h5>
                             <p class="card-text text-muted flex-grow-1 fs-6">{{ $burger->description }}</p>

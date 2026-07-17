@@ -7,8 +7,6 @@ use App\Models\User;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use cloudinary\Configuration\Configuration;
-use cloudinary\Api\UploadApi;
 
 class AdminController extends Controller
 {
@@ -28,39 +26,33 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('burgers', 'users', 'orders'));
     }
 
-    // 2. Guardar um Novo Hambúrguer (Com upload de Imagem)
+    // 2. Guardar um Novo Hambúrguer (Usando link externo da imagem)
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'required|url', // Mudamos de 'image' para 'url' para aceitar o link
         ]);
 
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('burgers', 'public');
-        }
-
+        // Como o utilizador vai colar o link direto, guardamos o texto recebido
         Burger::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'image' => $imagePath,
-            
+            'image' => $request->image, // Guarda o link completo (ex: https://i.postimg.cc/...)
         ]);
 
         return redirect()->back()->with('with_success', 'Hambúrguer adicionado com sucesso!');
     }
 
-    // 3. Remover um Hambúrguer (E apagar o ficheiro de imagem do disco)
+    // 3. Remover um Hambúrguer
     public function destroy(Burger $burger)
     {
-        if ($burger->image) {
-            Storage::disk('public')->delete($burger->image);
-        }
+        // Como o link aponta para um site externo, basta remover o hambúrguer do banco de dados
         $burger->delete();
+        
         return redirect()->back()->with('with_success', 'Hambúrguer removido!');
     }
 
@@ -73,7 +65,7 @@ class AdminController extends Controller
         ]);
 
         $user->update($request->only('name', 'email'));
-        return redirect()->back()->with('success', 'Dados do cliente atualizados com sucesso!');
+        return redirect()->back()->with('success', 'Dados do cliente updated com sucesso!');
     }
 
     // 5. Eliminar/Banir um Cliente do Sistema

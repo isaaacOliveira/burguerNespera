@@ -82,7 +82,7 @@
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label fw-medium">Foto do Produto</label>
-                                    <input type="file" name="image" class="form-control" required>
+                                    <input type="text" name="image" placeholder="coloque o link da imagem aqui " class="form-control" required>
                                 </div>
                                 <button type="submit" class="btn btn-dark text-warning w-100 fw-bold rounded-pill">
                                     <i class="bi bi-cloud-arrow-up-fill me-2"></i> Publicar no Site
@@ -112,7 +112,7 @@
                                         @foreach($burgers as $burger)
                                             <tr>
                                                 <td class="ps-3">
-                                                    <img src="{{ asset('storage/' . $burger->image) }}" class="rounded shadow-sm" style="width: 55px; height: 45px; object-fit: cover;">
+                                                    <img src="{{ $burger->image }}" alt="{{ $burger->name }}" style="width: 80px; height: 80px; object-fit: cover;">
                                                 </td>
                                                 <td class="fw-bold text-dark">{{ $burger->name }}</td>
                                                 <td class="text-success fw-bold">{{ number_format($burger->price, 2, ',', '.') }} Kz</td>
